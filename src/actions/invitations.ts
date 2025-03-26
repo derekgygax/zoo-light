@@ -5,45 +5,11 @@ import { currentUser } from "@clerk/nextjs/server";
 import { createClerkClient } from '@clerk/backend'
 
 
-// TODO you are handing createClerk WRONG!!!
-// TODO you are handing createClerk WRONG!!!
-// TODO you are handing createClerk WRONG!!!
-// TODO you are handing createClerk WRONG!!!
-// TODO you are handing createClerk WRONG!!!
+// TODO you should use the NextJS clerkClient
+// TODO Also get rid of the hardcoding
 
 
 const redirectUrl = "https://zoo-light.vercel.app/sign-up";
-
-
-// export const sendOrganzationInvitation = async () => {
-
-//   const clerkClient = createClerkClient({ secretKey: process.env.CLERK_SECRET_KEY });
-
-//   const user = await currentUser();
-//   console.log(user?.id);
-
-//   const inviterUserId = user?.id;
-
-//   const emailAddress = 'crispirzoo@gmail.com';
-
-//   const role = 'org:member';
-
-//   const response = await clerkClient.organizations.createOrganizationInvitation({
-//     organizationId,
-//     inviterUserId,
-//     emailAddress,
-//     role,
-//     redirectUrl: redirectUrl
-//   });
-//   console.log(response);
-// }
-
-
-
-
-
-
-
 
 export const createOrganizationAndSendInvite = async (
   organizationName: string,

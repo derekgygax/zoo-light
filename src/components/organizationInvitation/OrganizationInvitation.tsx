@@ -69,15 +69,4 @@ export const OrganizationInvitation = () => {
       )}
     </div>
   );
-
-
-  // return (
-  //   <div>
-  //     <button
-  //       onClick={async () => {
-  //         await sendOrganzationInvitation()
-  //       }}
-  //     >Send Invitation</button>
-  //   </div>
-  // )
 }
