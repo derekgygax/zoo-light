@@ -22,7 +22,7 @@ export const sendOrganzationInvitation = async () => {
 
   const inviterUserId = user?.id;
 
-  const emailAddress = 'derekgygaxcode@gmail.com';
+  const emailAddress = 'crispirzoo@gmail.com';
 
   const role = 'org:member';
 
@@ -31,7 +31,7 @@ export const sendOrganzationInvitation = async () => {
     inviterUserId,
     emailAddress,
     role,
-    redirectUrl: "http://localhost:3000/sign-up"
+    redirectUrl: "https://zoo-light-950u0wkrx-derekgygaxs-projects.vercel.app/sign-up"
   });
   console.log(response);
 }
