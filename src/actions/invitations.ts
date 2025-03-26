@@ -9,7 +9,7 @@ import { createClerkClient } from '@clerk/backend'
 // TODO Also get rid of the hardcoding
 
 
-const redirectUrl = "https://zoo-light.vercel.app/sign-up";
+// const redirectUrl = "https://zoo-light.vercel.app/sign-up";
 
 export const createOrganizationAndSendInvite = async (
   organizationName: string,
@@ -33,7 +33,7 @@ export const createOrganizationAndSendInvite = async (
       inviterUserId: user.id,
       emailAddress: inviteeEmail,
       role: "org:member",
-      redirectUrl: redirectUrl
+      // redirectUrl: redirectUrl
     });
 
     return {
