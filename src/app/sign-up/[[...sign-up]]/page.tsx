@@ -12,7 +12,7 @@ interface SignUpPageProps {
 
 export default async function SignUpPage(props: SignUpPageProps) {
 
-  const { __clerk_status, __clerk_ticket } = await props.searchParams;
+  const { __clerk_ticket } = await props.searchParams;
 
   const invitation = await getInvitedEmail(__clerk_ticket);
 
