@@ -12,6 +12,9 @@ import { createClerkClient } from '@clerk/backend'
 // TODO you are handing createClerk WRONG!!!
 
 
+const redirectUrl = "https://zoo-light-950u0wkrx-derekgygaxs-projects.vercel.app/sign-up";
+
+
 export const sendOrganzationInvitation = async () => {
   const organizationId = 'org_2upj2MAPYEjcfhS2EA9EnGLb0E2';
 
@@ -31,10 +34,66 @@ export const sendOrganzationInvitation = async () => {
     inviterUserId,
     emailAddress,
     role,
-    redirectUrl: "https://zoo-light-950u0wkrx-derekgygaxs-projects.vercel.app/sign-up"
+    redirectUrl: redirectUrl
   });
   console.log(response);
 }
+
+
+
+
+
+
+
+
+export const createOrganizationAndSendInvite = async (
+  organizationName: string,
+  inviteeEmail: string
+) => {
+  const clerkClient = createClerkClient({ secretKey: process.env.CLERK_SECRET_KEY });
+  try {
+    // 1. Get current user (inviter)
+    const user = await currentUser();
+    if (!user) throw new Error("User not authenticated");
+
+    // 2. Create the new organization
+    const newOrganization = await clerkClient.organizations.createOrganization({
+      name: organizationName,
+      createdBy: user.id,
+    });
+
+    // 3. Send invitation to the new member
+    const invitation = await clerkClient.organizations.createOrganizationInvitation({
+      organizationId: newOrganization.id,
+      inviterUserId: user.id,
+      emailAddress: inviteeEmail,
+      role: "org:member",
+      redirectUrl: redirectUrl
+    });
+
+    return {
+      success: true,
+      organizationId: newOrganization.id,
+      organizationName: newOrganization.name,
+      invitationId: invitation.id,
+      message: `Organization created and invitation sent to ${inviteeEmail}`
+    };
+
+  } catch (error) {
+    console.error("Error in createOrganizationAndSendInvite:", error);
+    return {
+      status: "error",
+      message: error instanceof Error ? error.message : "Failed to create organization and send invite"
+    };
+  }
+};
+
+
+
+
+
+
+
 
 
 export const getInvitedEmail = async (ticket: string) => {
