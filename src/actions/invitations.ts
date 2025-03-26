@@ -12,7 +12,7 @@ import { createClerkClient } from '@clerk/backend'
 // TODO you are handing createClerk WRONG!!!
 
 
-const redirectUrl = "https://zoo-light-950u0wkrx-derekgygaxs-projects.vercel.app/sign-up";
+const redirectUrl = "https://zoo-light.vercel.app/";
 
 
 export const sendOrganzationInvitation = async () => {
