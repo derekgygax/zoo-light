@@ -15,29 +15,28 @@ import { createClerkClient } from '@clerk/backend'
 const redirectUrl = "https://zoo-light.vercel.app/sign-up";
 
 
-export const sendOrganzationInvitation = async () => {
-  const organizationId = 'org_2upj2MAPYEjcfhS2EA9EnGLb0E2';
+// export const sendOrganzationInvitation = async () => {
 
-  const clerkClient = createClerkClient({ secretKey: process.env.CLERK_SECRET_KEY });
+//   const clerkClient = createClerkClient({ secretKey: process.env.CLERK_SECRET_KEY });
 
-  const user = await currentUser();
-  console.log(user?.id);
+//   const user = await currentUser();
+//   console.log(user?.id);
 
-  const inviterUserId = user?.id;
+//   const inviterUserId = user?.id;
 
-  const emailAddress = 'crispirzoo@gmail.com';
+//   const emailAddress = 'crispirzoo@gmail.com';
 
-  const role = 'org:member';
+//   const role = 'org:member';
 
-  const response = await clerkClient.organizations.createOrganizationInvitation({
-    organizationId,
-    inviterUserId,
-    emailAddress,
-    role,
-    redirectUrl: redirectUrl
-  });
-  console.log(response);
-}
+//   const response = await clerkClient.organizations.createOrganizationInvitation({
+//     organizationId,
+//     inviterUserId,
+//     emailAddress,
+//     role,
+//     redirectUrl: redirectUrl
+//   });
+//   console.log(response);
+// }
 
 
 
