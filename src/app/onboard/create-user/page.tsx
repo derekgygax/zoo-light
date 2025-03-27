@@ -1,7 +1,7 @@
 
 
 import { getInvitedEmail } from "@/actions/invitations";
-import { SignUpForm } from "@/components/signUpForm/SignUpForm";
+import { CreateUser } from "@/components/createUser/CreateUser";
 
 interface SignUpPageProps {
   searchParams: Promise<{
@@ -18,8 +18,9 @@ export default async function SignUpPage(props: SignUpPageProps) {
 
   return (
     <div>
-      <SignUpForm
+      <CreateUser
         email={invitation.email ?? "NO FIND"}
+        invitationToken={__clerk_ticket}
       />
     </div>
   );

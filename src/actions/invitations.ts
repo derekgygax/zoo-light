@@ -1,11 +1,6 @@
 "use server";
 
-import { currentUser } from "@clerk/nextjs/server";
-
-import { createClerkClient } from '@clerk/backend'
-
-
-// TODO you should use the NextJS clerkClient
+import { currentUser, clerkClient } from "@clerk/nextjs/server";
 // TODO Also get rid of the hardcoding
 
 
@@ -15,20 +10,21 @@ export const createOrganizationAndSendInvite = async (
   organizationName: string,
   inviteeEmail: string
 ) => {
-  const clerkClient = createClerkClient({ secretKey: process.env.CLERK_SECRET_KEY });
+  const client = await clerkClient();
+  // const clerkClient = createClerkClient({ secretKey: process.env.CLERK_SECRET_KEY });
   try {
     // 1. Get current user (inviter)
     const user = await currentUser();
     if (!user) throw new Error("User not authenticated");
 
     // 2. Create the new organization
-    const newOrganization = await clerkClient.organizations.createOrganization({
+    const newOrganization = await client.organizations.createOrganization({
       name: organizationName,
       createdBy: user.id,
     });
 
     // 3. Send invitation to the new member
-    const invitation = await clerkClient.organizations.createOrganizationInvitation({
+    const invitation = await client.organizations.createOrganizationInvitation({
       organizationId: newOrganization.id,
       inviterUserId: user.id,
       emailAddress: inviteeEmail,
@@ -53,16 +49,8 @@ export const createOrganizationAndSendInvite = async (
   }
 };
 
-
-
-
-
-
-
-
-
 export const getInvitedEmail = async (ticket: string) => {
-  const clerkClient = createClerkClient({ secretKey: process.env.CLERK_SECRET_KEY });
+  const client = await clerkClient();
   try {
     // 1. Decode the JWT token (no verification needed for Clerk tokens)
     const decoded = JSON.parse(
@@ -74,7 +62,7 @@ export const getInvitedEmail = async (ticket: string) => {
     };
 
     // 2. Fetch invitation details from Clerk
-    const invitation = await clerkClient.organizations.getOrganizationInvitation({
+    const invitation = await client.organizations.getOrganizationInvitation({
       organizationId: decoded.oid,
       invitationId: decoded.sid,
     });
@@ -83,7 +71,8 @@ export const getInvitedEmail = async (ticket: string) => {
     return {
       email: invitation.emailAddress,
       valid: invitation.status === 'pending', // Check if invitation is still active
-      organizationId: decoded.oid
+      organizationId: decoded.oid,
+      invitationId: decoded.sid
     };
 
   } catch (err) {
@@ -91,3 +80,4 @@ export const getInvitedEmail = async (ticket: string) => {
     return { error: "Invalid or expired invitation" };
   }
 };
+

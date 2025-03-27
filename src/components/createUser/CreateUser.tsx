@@ -1,24 +1,38 @@
 "use client"
 
 import { useState } from "react";
+import { useSignUp } from "@clerk/nextjs";
+import { useRouter } from "next/navigation";
 
-
-interface SignUpFormProps {
+interface CreateUserProps {
   email: string;
+  invitationToken: string;
 }
 
-export const SignUpForm = ({ email }: SignUpFormProps) => {
+export const CreateUser = ({ email, invitationToken }: CreateUserProps) => {
 
+  const { isLoaded, signUp, setActive: setActiveSignUp } = useSignUp();
+
+  const router = useRouter();
 
   const [formData, setFormData] = useState({
     first_name: '',
     last_name: '',
+    phone_number: '',
     email: email,
     password: '',
     password_2: ''
   });
 
   const [errors, setErrors] = useState<Partial<typeof formData>>({});
+
+
+  if (!isLoaded) {
+    return (
+      <div>Loading...</div>
+    )
+  }
+
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -53,11 +67,43 @@ export const SignUpForm = ({ email }: SignUpFormProps) => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (validate()) {
-      console.log('Form submitted:', formData);
-      // Here you would typically call an API
+      // console.log('Form submitted:', formData);
+
+
+      try {
+        // Create a new sign-up with the supplied invitation token.
+        // Make sure you're also passing the ticket strategy.
+        // After the below call, the user's email address will be
+        // automatically verified because of the invitation token.
+        const signUpAttempt = await signUp?.create({
+          strategy: 'ticket',
+          ticket: invitationToken,
+          firstName: formData.first_name,
+          lastName: formData.last_name,
+          password: formData.password,
+          phoneNumber: formData.phone_number
+        })
+
+        // If the sign-up was successful, set the session to active
+        if (signUpAttempt?.status === 'complete') {
+          if (setActiveSignUp) {
+            await setActiveSignUp({ session: signUpAttempt.createdSessionId });
+            router.push("/onboard/select-mfa");
+          }
+        } else {
+          // If the sign-in attempt is not complete, check why.
+          // User may need to complete further steps.
+          console.error(JSON.stringify(signUpAttempt, null, 2))
+        }
+      } catch (err) {
+        // See https://clerk.com/docs/custom-flows/error-handling
+        // for more info on error handling
+        console.error(JSON.stringify(err, null, 2))
+      }
+
     }
   };
 
@@ -86,6 +132,18 @@ export const SignUpForm = ({ email }: SignUpFormProps) => {
             className="border p-2 rounded"
           />
           {errors.last_name && <span className="text-red-500 text-sm">{errors.last_name}</span>}
+        </div>
+
+        <div className="flex flex-col">
+          <label htmlFor="phone_number">Phone Number</label>
+          <input
+            id="phone_number"
+            name="phone_number"
+            value={formData.phone_number}
+            onChange={handleChange}
+            className="border p-2 rounded"
+          />
+          {errors.phone_number && <span className="text-red-500 text-sm">{errors.phone_number}</span>}
         </div>
 
         <div className="flex flex-col">
