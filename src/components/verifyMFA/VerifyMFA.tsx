@@ -33,13 +33,13 @@ export const VerfiyMFA = ({ type }: VerfiyMFAProps) => {
         console.log(phoneVerifyAttempt);
 
         if (phoneVerifyAttempt?.verification.status === 'verified') {
-          // This makes it the default if they may use the other form
-          // of multifactor authentication
-          let phoneUpdated = await phoneNumber.makeDefaultSecondFactor();
+          // This marks that two factor is enabled
+          let phoneUpdated = await phoneNumber.setReservedForSecondFactor({ reserved: true });
           console.log(phoneUpdated);
 
-          // This marks that two factor is enabled
-          phoneUpdated = await phoneNumber.setReservedForSecondFactor({ reserved: true });
+          // This makes it the default if they may use the other form
+          // of multifactor authentication
+          phoneUpdated = await phoneNumber.makeDefaultSecondFactor();
           console.log(phoneUpdated);
 
           router.push("/onboard/choose-preferences");

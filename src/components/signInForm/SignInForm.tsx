@@ -4,13 +4,12 @@
 // This does MFA for using the phone
 // it is hardcoded very strangely so needs to fixed up but for now it works
 
-import { useSignIn, useUser } from '@clerk/nextjs';
+import { useSignIn } from '@clerk/nextjs';
 import { useRouter } from 'next/navigation';
 import { useCallback, useState } from 'react';
 
 
 export default function SignInForm() {
-  const { isSignedIn, user } = useUser()
   const { isLoaded, signIn, setActive } = useSignIn()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -25,12 +24,15 @@ export default function SignInForm() {
     try {
       const attemptFirstFactor = await signIn.create({
         identifier: email,
-        password,
+        password: password,
       });
       console.log(attemptFirstFactor);
 
       if (attemptFirstFactor.status === 'complete') {
-        await setActive({ session: attemptFirstFactor.createdSessionId })
+        await setActive({
+          session:
+            attemptFirstFactor.createdSessionId
+        });
         router.replace('/')
       } else if (attemptFirstFactor.status === 'needs_second_factor') {
         const phoneNumberId = attemptFirstFactor.supportedSecondFactors?.find((factors) => {
@@ -56,11 +58,13 @@ export default function SignInForm() {
     try {
       const attemptSecondFactor = await signIn.attemptSecondFactor({
         strategy: 'phone_code',
-        code: code,
-      })
+        code: code
+      });
 
       if (attemptSecondFactor.status === 'complete') {
-        await setActive({ session: attemptSecondFactor.createdSessionId })
+        await setActive({
+          session: attemptSecondFactor.createdSessionId
+        });
         router.replace('/')
       } else {
         console.error(JSON.stringify(attemptSecondFactor, null, 2))
