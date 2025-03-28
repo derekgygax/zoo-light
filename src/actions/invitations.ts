@@ -1,10 +1,43 @@
 "use server";
 
 import { currentUser, clerkClient } from "@clerk/nextjs/server";
+
 // TODO Also get rid of the hardcoding
 
-
 // const redirectUrl = "https://zoo-light.vercel.app/sign-up";
+
+
+export const createOrganization = async (organizationName: string) => {
+  const client = await clerkClient();
+
+  try {
+    // 1. Get current user (creator)
+    const user = await currentUser();
+    if (!user) throw new Error("User not authenticated");
+
+    // 2. Create the new organization
+    const newOrganization = await client.organizations.createOrganization({
+      name: organizationName,
+      createdBy: user.id,
+    });
+
+    return {
+      success: true,
+      organizationId: newOrganization.id,
+      organizationName: newOrganization.name,
+      message: `Organization created by ${user.fullName}`
+    };
+
+  } catch (error) {
+    console.error("Error in createOrganization:", error);
+    return {
+      success: false,
+      message: error instanceof Error ? error.message : "Failed to create organization",
+      organizationId: "no",
+      organizationName: "no"
+    };
+  }
+}
 
 export const createOrganizationAndSendInvite = async (
   organizationName: string,
@@ -43,8 +76,11 @@ export const createOrganizationAndSendInvite = async (
   } catch (error) {
     console.error("Error in createOrganizationAndSendInvite:", error);
     return {
-      status: "error",
-      message: error instanceof Error ? error.message : "Failed to create organization and send invite"
+      message: error instanceof Error ? error.message : "Failed to create organization and send invite",
+      success: false,
+      organizationId: "no",
+      organizationName: "no",
+      invitationId: "no"
     };
   }
 };

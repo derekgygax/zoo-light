@@ -1,8 +1,10 @@
 "use client"
+
+
 import { useState } from "react";
 
-interface OrganizationInvitationProps {
-  createOrganizationAndSendInvite: (organizationName: string, inviteeEmail: string) => Promise<{
+interface CreateOrganizationProps {
+  createOrganization: (organizationName: string) => Promise<{
     success: boolean,
     organizationId: string,
     organizationName: string,
@@ -10,10 +12,9 @@ interface OrganizationInvitationProps {
   }>;
 }
 
-export const OrganizationInvitation = ({ createOrganizationAndSendInvite }: OrganizationInvitationProps) => {
+export const CreateOrganization = ({ createOrganization }: CreateOrganizationProps) => {
 
   const [organizationName, setOrganizationName] = useState('');
-  const [inviteeEmail, setInviteeEmail] = useState('');
   const [status, setStatus] = useState<{
     loading: boolean;
     message: string;
@@ -21,7 +22,7 @@ export const OrganizationInvitation = ({ createOrganizationAndSendInvite }: Orga
   }>({ loading: false, message: '', error: false });
 
   const handleSubmit = async () => {
-    await createOrganizationAndSendInvite(organizationName, inviteeEmail);
+    await createOrganization(organizationName);
     setStatus({
       loading: false,
       message: "yes",
@@ -46,28 +47,13 @@ export const OrganizationInvitation = ({ createOrganizationAndSendInvite }: Orga
         />
       </div>
 
-      <div className="space-y-2">
-        <label htmlFor="inviteeEmail" className="block font-medium">
-          Invitee Email
-        </label>
-        <input
-          id="inviteeEmail"
-          type="email"
-          value={inviteeEmail}
-          onChange={(e) => setInviteeEmail(e.target.value)}
-          className="w-full px-3 py-2 border rounded"
-          placeholder="Enter invitee email"
-          required
-        />
-      </div>
-
       <button
         onClick={handleSubmit}
         disabled={status.loading}
         className={`px-4 py-2 rounded text-white ${status.loading ? 'bg-gray-400' : 'bg-blue-600 hover:bg-blue-700'
           }`}
       >
-        {status.loading ? 'Sending...' : 'Create Organization & Send Invite'}
+        {status.loading ? 'Sending...' : 'Create Organization'}
       </button>
 
       {status.message && (
