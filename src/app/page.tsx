@@ -3,6 +3,7 @@ import { OrganizationInvitation } from "@/components/organizationInvitation/Orga
 
 import { createOrganization, createOrganizationAndSendInvite } from "@/actions/invitations";
 import { CreateOrganization } from "@/components/createOrganization/CreateOrganization";
+import { User } from "@/components/user/User";
 
 export default async function Home() {
 
@@ -15,6 +16,7 @@ export default async function Home() {
         <OrganizationInvitation
           createOrganizationAndSendInvite={createOrganizationAndSendInvite}
         />
+        <User />
       </main>
       <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
       </footer>
